@@ -2,25 +2,22 @@ import os
 import subprocess
 import sys
 import tempfile
+import re
+
 
 def latex_to_svg(math_string, output_file):
-    latex_document = f"""
-\\documentclass[preview, border={{0pt 0pt 0pt 0pt}}]{{standalone}}
-\\usepackage{{amsmath}}
-\\usepackage{{amssymb}}
-\\begin{{document}}
-\\({math_string}\\)
-\\end{{document}}
-"""
-    
-    with tempfile.TemporaryDirectory() as temp_dir:
-        tex_file_path = os.path.join(temp_dir, "texput.tex")
-        dvi_file_path = os.path.join(temp_dir, "texput.dvi")
-        svg_file_path = os.path.join(temp_dir, "texput.svg")
+    latex_document = (
+        "\\documentclass[margin=0.5pt]{standalone}"
+        "\\usepackage{amsmath,amssymb}"
+        "\\begin{document}"
+        f"\\({math_string}\\)"
+        "\\end{document}"
+    )
 
-        with open(tex_file_path, "w") as tex_file:
-            tex_file.write(latex_document)
-        
+    with tempfile.TemporaryDirectory() as temp_dir:
+        dvi_file = os.path.join(temp_dir, "texput.dvi")
+        svg_file = os.path.join(temp_dir, "texput.svg")
+
         latex_result = subprocess.run(
             ["latex", "-output-directory", temp_dir],
             input=latex_document,
@@ -28,12 +25,13 @@ def latex_to_svg(math_string, output_file):
             text=True,
         )
         if latex_result.returncode != 0:
+            print(latex_document)
             print(latex_result.stdout)
             print(latex_result.stderr, file=sys.stderr)
             sys.exit(1)
-        
+
         svg_result = subprocess.run(
-            ["dvisvgm", "--no-fonts", "--exact", "--scale=2", "-o", svg_file_path, dvi_file_path],
+            ["dvisvgm", "--no-fonts", "--exact", "--scale=2", "--bbox=papersize", "-o", svg_file, dvi_file],
             capture_output=True,
             text=True,
         )
@@ -41,19 +39,32 @@ def latex_to_svg(math_string, output_file):
             print(svg_result.stdout)
             print(svg_result.stderr, file=sys.stderr)
             sys.exit(1)
-        
-        with open(svg_file_path, "r") as svg_file:
-            svg_content = svg_file.read()
 
-        with open(output_file, "w") as output_svg_file:
-            output_svg_file.write(svg_content)
+        min_svg_result = subprocess.run(
+            ["svgo", "-i", svg_file, output_file],
+            capture_output=True,
+            text=True,
+        )
+        if min_svg_result.returncode != 0:
+            print(min_svg_result.stdout)
+            print(min_svg_result.stderr, file=sys.stderr)
+            sys.exit(1)
+        
+        with open(output_file, 'r') as output_file:
+            dimensions = re.search(r"width=['\"]([\d.]+)['\"] height=['\"]([\d.]+)['\"]", output_file.read())
+            if dimensions:
+                width, height = float(dimensions.group(1)), float(dimensions.group(2))
+                print(f"Width: {width} pixels, Height: {height} pixels")
+
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python latex_to_svg.py <latex_math_string> <output_svg_file>")
-        sys.exit(1)
+    import argparse
 
-    math_string = sys.argv[1]
-    output_file = sys.argv[2]
+    parser = argparse.ArgumentParser(description='Convert LaTeX math string to SVG')
+    parser.add_argument('latex_math_string', type=str, help='LaTeX math string to be converted')
+    parser.add_argument('output_svg_file', type=str, help='output SVG file name')
 
-    latex_to_svg(math_string, output_file)
+    args = parser.parse_args()
+
+    latex_to_svg(args.latex_math_string, args.output_svg_file)
+

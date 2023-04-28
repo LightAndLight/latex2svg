@@ -14,6 +14,7 @@
           buildInputs = with pkgs; [
             texlive-custom 
             python3
+            nodePackages.svgo
           ];
         };
   });
