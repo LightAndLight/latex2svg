@@ -1,8 +1,12 @@
 {
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
+    texmath = {
+      url = "github:jgm/texmath";
+      flake = false;
+    };
   };
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, texmath }:
     flake-utils.lib.eachDefaultSystem (system:
       let 
         pkgs = import nixpkgs { inherit system; };
@@ -17,7 +21,9 @@
             nodePackages.svgo
             
             gnum4
-            moreutils
+            moreutils # parallel
+
+            (haskellPackages.developPackage { root = texmath; cabal2nixOptions = "--flag=executable"; })
           ];
         };
   });

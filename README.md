@@ -6,3 +6,4 @@ each viewer's browser do it? Here's where I play around with ideas to that effec
 
 * `latex2svg.py` - a Python script that renders an equation as an SVG
 * `latex2svg.m4` - a GNU M4 script for converting all equations in a document to SVGs and including them via `<img>` tags
+* `latex2mathml.m4` - a GNU M4 script for converting all equations in a document to MathML

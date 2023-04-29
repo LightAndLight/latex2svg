@@ -35,7 +35,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "texmath": "texmath"
       }
     },
     "systems": {
@@ -50,6 +51,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "texmath": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1680275206,
+        "narHash": "sha256-YAawbaxU+AEPLZ9grj5HFKpcLLrkQ0N6ojhOlXgOy6s=",
+        "owner": "jgm",
+        "repo": "texmath",
+        "rev": "28d040cf2a3777a9b13b09c2154a78d16cef511f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgm",
+        "repo": "texmath",
         "type": "github"
       }
     }
