@@ -15,6 +15,9 @@
             texlive-custom 
             python3
             nodePackages.svgo
+            
+            gnum4
+            moreutils
           ];
         };
   });
