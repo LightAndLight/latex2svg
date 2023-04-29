@@ -3,6 +3,7 @@ include(`latex2mathml.m4')dnl
 <html>
 <head>
     <title>LaTeX Equation to SVG Example</title>
+    <script src="https://fred-wang.github.io/mathml-warning.js/mpadded-min.js"></script>
 </head>
 <body>
     <h1>LaTeX Equation to SVG Example</h1>
