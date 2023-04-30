@@ -1,4 +1,4 @@
-# `latex2svg`
+# `latex4web`
 
 My blog currently uses [MathJax](https://www.mathjax.org/) to display equations, and I realised that's a little bit silly
 considering it's a statically generated site. What if I could render the equations during site generation, instead having
